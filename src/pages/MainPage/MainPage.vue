@@ -6,12 +6,12 @@
       </div>
 
       <div class="content">
-        <div class="topic" v-for='item in itemList'>
+        <div class="topic" v-for='(item,index) in itemList'>
           <div class="img"><router-link :to="{ name: '', params: {} }"><img :src="item.author.avatar_url" :title="item.author.loginname"></router-link></div>
           <div class="num"><span title="回复数">{{item.reply_count}}</span>/<span title="点击数">{{item.visit_count}}</span></div>
-          <div class="type" :class="{active:item.top||item.good}">{{item.tab}}</div>
-          <div class="title" :title="item.title"><router-link :to="{ name: '', params: {} }">{{item.title}}</router-link></div>
-          <div class="answer"><router-link :to="{ name: '', params: {} }"><img src="" alt=""><span>xx小时前</span></router-link></div>
+          <div class="type" :class="{active:item.top||item.good,display:tab=='all'||tab==''}">{{item.tab}}</div>
+          <div class="title" :title="item.title"><router-link :to="{ path: 'topic/'+item.id, params: {} }">{{item.title}}</router-link></div>
+          <div class="answer"><router-link :to="{ name: '', params: {} }"><img src="" alt=""><span>{{time[index]}}</span></router-link></div>
         </div>
       </div>
     </div>
@@ -30,10 +30,13 @@ export default {
       isActive:'',
       topic:'',
       itemList:'',
+      tab:this.$route.query.tab?this.$route.query.tab:'',
+      time:[],
     }
   },
   methods:{
     choseTopics:function(data){
+      this.tab = data.name;
       this.$router.push({
         path:'/',
         query:{tab:data.name},
@@ -41,13 +44,14 @@ export default {
       this.init()
     },
     init:function(){
+      this.itemList = '';
       this.axios({
         method:"GET",
         url:"https://cnodejs.org/api/v1/topics",
         params:{
           page:"",
           tab:this.$route.query.tab?this.$route.query.tab:'',
-          limit:"20",
+          limit:"0",
           mdrender:"",
         }
       })
@@ -56,6 +60,7 @@ export default {
         let data = res.data.data
         this.isActive = this.$route.query.tab?this.$route.query.tab:'all';
         for (var i = 0; i < data.length; i++) {
+          this.time[i] = this.util.formTimeToData(data[i].last_reply_at)
           if (data[i].top) {
             data[i].tab = '置顶'
           }else if(data[i].good){
@@ -147,9 +152,14 @@ export default {
           background-color: #e5e5e5;
           color: #999;
           border-radius: 2px;
+          display: none;
           &.active{
             background-color: #80bd01;
             color: #fff;
+            display: block;
+          }
+          &.display{
+            display: block;
           }
         }
         .title{
