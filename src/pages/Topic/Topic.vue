@@ -15,15 +15,14 @@
             <span>&nbsp;来自 {{tab}}&nbsp;</span>
           </div>
         </div>
-        <div class="collection">
-          收藏
-        </div>
+        <div class="cancel" v-if="this.is_collect" @click="cancel">取消收藏</div>
+        <div class="collection" v-else @click="collection">收藏</div>
       </div>
 
       <div class="content" v-html="dataList.content"></div>
     </div>
 
-    <div class="reply">
+    <div class="reply" v-if="replyList.length!==0">
       <div class="bar">回复</div>
       <div class="replyList" v-for="(reply,index) in replyList">
         <div class="img">
@@ -59,15 +58,51 @@ export default {
       replyList:'',
       replyTime:[],
       tab:'',
+      accesstoken:'',
+      is_collect:'',
     }
   },
   methods:{
+    cancel:function(){
+      this.axios({
+        method:"POST",
+        url:"https://cnodejs.org/api/v1/topic_collect/de_collect",
+        data:{
+          accesstoken:this.accesstoken,
+          topic_id:this.dataList.id,
+        }
+      })
+      .then((res)=>{
+        console.log(res)
+        this.is_collect = !res.data.success;
+      })
+      .catch((err)=>{
+        console.log(err )
+      })
+    },
+    collection:function(){
+      this.axios({
+        method:"POST",
+        url:"https://cnodejs.org/api/v1/topic_collect/collect",
+        data:{
+          accesstoken:this.accesstoken,
+          topic_id:this.dataList.id,
+        }
+      })
+      .then((res)=>{
+        console.log(res)
+        this.is_collect = res.data.success;
+      })
+      .catch((err)=>{
+        console.log(err)
+      })
+    },
     init:function(){
       this.axios({
         method:"GET",
         url:"https://cnodejs.org/api/v1/topic/"+this.$route.params.id,
         params:{
-          accesstoken:'',
+          accesstoken:this.accesstoken,
         }
       })
       .then((res)=>{
@@ -79,6 +114,7 @@ export default {
         this.authorName = data.author.loginname;
         let replyList = data.replies;
         this.replyList = replyList;
+        this.is_collect = data.is_collect;
         for (var i = 0; i < replyList.length; i++) {
           this.replyTime[i] = this.util.formTimeToData(replyList[i].create_at)
         }
@@ -100,6 +136,7 @@ export default {
     }
   },
   mounted(){
+    this.accesstoken = this.util.getCookie('accesstoken')
     this.init()
   },
 }
@@ -143,6 +180,13 @@ export default {
       }
       .collection{
         background-color: #80bd01;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      .cancel{
+        background-color: #909090;
         color: #fff;
         padding: 5px 10px;
         border-radius: 3px;

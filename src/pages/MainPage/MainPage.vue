@@ -7,11 +7,22 @@
 
       <div class="content">
         <div class="topic" v-for='(item,index) in itemList'>
-          <div class="img"><router-link :to="{ name: '', params: {} }"><img :src="item.author.avatar_url" :title="item.author.loginname"></router-link></div>
+          <div class="img"><router-link :to="{ path: '/user/'+item.author.loginname, params: {} }"><img :src="item.author.avatar_url" :title="item.author.loginname"></router-link></div>
           <div class="num"><span title="回复数">{{item.reply_count}}</span>/<span title="点击数">{{item.visit_count}}</span></div>
           <div class="type" :class="{active:item.top||item.good,display:tab=='all'||tab==''}">{{item.tab}}</div>
           <div class="title" :title="item.title"><router-link :to="{ path: 'topic/'+item.id, params: {} }">{{item.title}}</router-link></div>
           <div class="answer"><router-link :to="{ name: '', params: {} }"><img src="" alt=""><span>{{time[index]}}</span></router-link></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="banner">
+      <div class="userInfo">
+        <div class="bar"><span>个人信息</span></div>
+        <div class="content">
+          <p><img :src="user.avatar_url"><router-link :to="{ path: '/user/'+user.loginname, params: {} }">{{user.loginname}}</router-link></p>
+          <p>积分:{{score}}</p>
+          <p>111</p>
         </div>
       </div>
     </div>
@@ -32,6 +43,10 @@ export default {
       itemList:'',
       tab:this.$route.query.tab?this.$route.query.tab:'',
       time:[],
+      accesstoken:'',
+      user:'',
+      score:'',
+      loginname:'',
     }
   },
   methods:{
@@ -56,7 +71,6 @@ export default {
         }
       })
       .then((res)=>{
-        console.log(res)
         let data = res.data.data
         this.isActive = this.$route.query.tab?this.$route.query.tab:'all';
         for (var i = 0; i < data.length; i++) {
@@ -87,7 +101,38 @@ export default {
     }
   },
   mounted(){
-    this.init()
+    this.util.setCookie('accesstoken','0ebfe0ed-5324-4283-9f4c-1edc3dc8d9ce',30);
+    this.accesstoken = this.util.getCookie('accesstoken')
+    this.init();
+
+    this.axios({
+      method:"POST",
+      url:"https://cnodejs.org/api/v1/accesstoken",
+      data:{
+        accesstoken : this.accesstoken,
+      }
+    })
+    .then((res)=>{
+      console.log(res)
+      let data = res.data;
+      this.user = data;
+      this.axios({
+        method:"GET",
+        url:"https://cnodejs.org/api/v1/user/"+this.user.loginname,
+        params:{
+
+        }
+      })
+      .then((res)=>{
+        this.score = res.data.data.score;
+      })
+      .catch((err)=>{
+
+      })
+    })
+    .catch((err)=>{
+
+    })
   },
 }
 </script>
@@ -95,16 +140,18 @@ export default {
 
 <style lang="less">
 #MainPage{
-  width: 1000px;
   margin: 0 auto;
+  padding: 20px 0;
+  width: 1200px;
+  display: flex;
   .Nav{
-    width: 1000px;
-    margin: 0 auto;
+    width: 900px;
     .navbar{
       height: 40px;
       background-color: #f6f6f6;
       display: flex;
       align-items: center;
+      border-radius: 5px 5px 0 0;
       .icon{
         color: #80bd01;
         margin: 0 10px;
@@ -118,10 +165,10 @@ export default {
       }
     }
     .content{
-
+      border-radius:0 0 5px 5px;
+      background-color: #fff;
       .topic{
         height: 50px;
-        background-color: #fff;
         border-bottom: 1px solid #f0f0f0;
         display: flex;
         align-items: center;
@@ -201,6 +248,41 @@ export default {
       }
     }
   }
-
+  .banner{
+    flex: 1;
+    margin-left: 20px;
+    .userInfo{
+      background-color: #fff;
+      border-radius: 5px;
+      .bar{
+        height: 40px;
+        background-color: #f6f6f6;
+        display: flex;
+        align-items: center;
+        border-radius: 5px 5px 0 0;
+        font-size: 14px;
+        box-sizing: border-box;
+        text-indent: 8px;
+      }
+      .content{
+        padding: 8px;
+        p{
+          display: flex;
+          align-items: center;
+          img{
+            display: inline-block;
+            width: 48px;
+            height: 48px;
+            border-radius: 3px;
+            margin-right: 10px;
+          }
+          a{
+            color: #778087;
+            text-decoration: none;
+          }
+        }
+      }
+    }
+  }
 }
 </style>
