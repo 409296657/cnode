@@ -1,8 +1,11 @@
 <template>
-  <div id="MainPage">
+  <div id="Collection">
     <div class="Nav">
       <div class="navbar">
-        <div v-for='(icon,index) in iconList' class="icon" :class='{active:isActive==icon.name}' @click="choseTopics(icon)">{{icon.text}}</div>
+        <div class="icon">
+          <router-link :to="{ path: '/', params: {} }">主页</router-link>
+          <span>{{user.loginname}} /  收藏的话题</span>
+        </div>
       </div>
 
       <div class="content">
@@ -20,24 +23,16 @@
             {{item.tab}}
           </div>
           <div class="title" :title="item.title">
-            <router-link :to="{ path: 'topic/'+item.id, params: {} }">
+            <router-link :to="{ path: '/topic/'+item.id, params: {} }">
               {{item.title}}
             </router-link>
           </div>
           <div class="answer">
-            <router-link :to="{ name: '', params: {} }">
-              <img src="" alt="">
+            <router-link :to="{ name: '', params: {} }"><img src="" alt="">
               <span>{{time[index]}}</span>
             </router-link>
           </div>
         </div>
-        <el-pagination
-          @current-change="handleCurrentChange"
-          :current-page.sync="currentPage"
-          :page-size="40"
-          layout="prev, pager, next, jumper"
-          :total="1000">
-        </el-pagination>
       </div>
     </div>
 
@@ -45,7 +40,10 @@
       <div class="userInfo">
         <div class="bar"><span>个人信息</span></div>
         <div class="content">
-          <p><img :src="user.avatar_url"><router-link :to="{ path: '/user/'+user.loginname, params: {} }">{{user.loginname}}</router-link></p>
+          <p>
+            <img :src="user.avatar_url">
+            <router-link :to="{ path: '/user/'+user.loginname, params: {} }">{{user.loginname}}</router-link>
+          </p>
           <p>积分:{{score}}</p>
           <p>111</p>
         </div>
@@ -56,13 +54,12 @@
 
 <script>
 export default {
-  name:'MainPage',
+  name:'Collection',
   components:{
 
   },
   data () {
     return {
-      iconList:[{text:"全部",name:"all",index:0},{text:"精华",name:"good",index:1},{text:"分享",name:"share",index:2},{text:"问答",name:"ask",index:3},{text:"招聘",name:"job",index:4},{text:"客户端测试",name:"dev",index:5}],
       isActive:'',
       topic:'',
       itemList:'',
@@ -72,20 +69,11 @@ export default {
       user:'',
       score:'',
       loginname:'',
-      currentPage:this.$route.query.page?this.$route.query.page:1,
     }
   },
   methods:{
-    handleCurrentChange(val) {
-      this.$router.push({
-        path:'/',
-        query:{tab:this.tab?this.tab:'all',page:val},
-      });
-      this.init()
-    },
     choseTopics:function(data){
       this.tab = data.name;
-      this.currentPage = 1;
       this.$router.push({
         path:'/',
         query:{tab:data.name},
@@ -96,9 +84,9 @@ export default {
       this.itemList = '';
       this.axios({
         method:"GET",
-        url:"https://cnodejs.org/api/v1/topics",
+        url:"https://cnodejs.org/api/v1/topic_collect/"+this.$route.params.id,
         params:{
-          page:this.$route.query.page?this.$route.query.page:'',
+          page:"",
           tab:this.$route.query.tab?this.$route.query.tab:'',
           limit:"0",
           mdrender:"",
@@ -135,34 +123,20 @@ export default {
     }
   },
   mounted(){
-    this.util.setCookie('accesstoken','0ebfe0ed-5324-4283-9f4c-1edc3dc8d9ce',30);
-    this.accesstoken = this.util.getCookie('accesstoken')
     this.init();
 
     this.axios({
-      method:"POST",
-      url:"https://cnodejs.org/api/v1/accesstoken",
-      data:{
-        accesstoken : this.accesstoken,
+      method:"GET",
+      url:"https://cnodejs.org/api/v1/user/"+this.$route.params.id,
+      params:{
+
       }
     })
     .then((res)=>{
       console.log(res)
-      let data = res.data;
+      let data = res.data.data;
       this.user = data;
-      this.axios({
-        method:"GET",
-        url:"https://cnodejs.org/api/v1/user/"+this.user.loginname,
-        params:{
-
-        }
-      })
-      .then((res)=>{
-        this.score = res.data.data.score;
-      })
-      .catch((err)=>{
-
-      })
+      this.score = res.data.data.score;
     })
     .catch((err)=>{
 
@@ -173,7 +147,7 @@ export default {
 
 
 <style lang="less">
-#MainPage{
+#Collection{
   margin: 0 auto;
   padding: 20px 0;
   width: 1200px;
@@ -187,12 +161,15 @@ export default {
       align-items: center;
       border-radius: 5px 5px 0 0;
       .icon{
-        color: #80bd01;
+        color: #999;
         margin: 0 10px;
         font-size: 14px;
         padding: 3px;
         border-radius: 3px;
-        cursor: pointer;
+        a{
+          text-decoration: none;
+          color: #80bd01;
+        }
         &.active{
           background-color: #80bd01;
           color: #fff;

@@ -8,9 +8,16 @@
           </div>
         </div>
         <div class="content">
-          <p><img :src="user.avatar_url"><router-link :to="{ name: '', params: {} }">{{user.loginname}}</router-link></p>
+          <p>
+            <img :src="user.avatar_url">
+            <router-link :to="{ name: '', params: {} }">{{user.loginname}}</router-link>
+          </p>
           <p>积分 : {{user.score}}</p>
-          <p><router-link :to="{ name: '', params: {} }">{{collection}}个收藏话题</router-link></p>
+          <p>
+            <router-link :to="{ path: user.loginname+'/collections', params: {} }">
+              {{collection}}个收藏话题
+            </router-link>
+          </p>
           <p>github地址：<a :href="github" target="_blank">@{{user.githubUsername}}</a></p>
           <p>注册时间: {{registrationTime}}</p>
         </div>
@@ -22,13 +29,32 @@
         </div>
         <div class="content">
           <div class="topic" v-for='(item,index) in found'>
-            <div class="img"><router-link :to="{ path: '/user/'+item.author.loginname, params: {} }"><img :src="item.author.avatar_url" :title="item.author.loginname"></router-link></div>
-            <div class="num"><span title="回复数">{{item.reply_count}}</span>/<span title="点击数">{{item.visit_count}}</span></div>
-            <div class="type">{{item.tab}}</div>
-            <div class="title" :title="item.title"><router-link :to="{ path: '/topic/'+item.id, params: {} }">{{item.title}}</router-link></div>
-            <div class="answer"><router-link :to="{ name: '', params: {} }"><img src="" alt=""><span></span></router-link></div>
+            <div class="img">
+              <router-link :to="{ path: '/user/'+item.author.loginname, params: {} }">
+                <img :src="item.author.avatar_url" :title="item.author.loginname">
+              </router-link>
+            </div>
+            <div class="num">
+              <span title="回复数">{{item.reply_count}}</span>/
+              <span title="点击数">{{item.visit_count}}</span>
+            </div>
+            <div class="type">
+              {{item.tab}}
+            </div>
+            <div class="title" :title="item.title">
+              <router-link :to="{ path: '/topic/'+item.id, params: {} }">
+                {{item.title}}
+              </router-link>
+            </div>
+            <div class="answer">
+              <router-link :to="{ name: '', params: {} }">
+                <img src="" alt=""><span></span>
+              </router-link>
+            </div>
           </div>
-          <div class="more"><router-link :to="{ name: '', params: {} }">查看更多»</router-link></div>
+          <div class="more">
+            <router-link :to="{ name: '', params: {} }">查看更多»</router-link>
+          </div>
         </div>
       </div>
 
@@ -38,13 +64,32 @@
         </div>
         <div class="content">
           <div class="topic" v-for='(item,index) in join'>
-            <div class="img"><router-link :to="{ path: '/user/'+item.author.loginname, params: {} }"><img :src="item.author.avatar_url" :title="item.author.loginname"></router-link></div>
-            <div class="num"><span title="回复数">{{item.reply_count}}</span>/<span title="点击数">{{item.visit_count}}</span></div>
-            <div class="type">{{item.tab}}</div>
-            <div class="title" :title="item.title"><router-link :to="{ path: '/topic/'+item.id, params: {} }">{{item.title}}</router-link></div>
-            <div class="answer"><router-link :to="{ name: '', params: {} }"><img src="" alt=""><span></span></router-link></div>
+            <div class="img">
+              <router-link :to="{ path: '/user/'+item.author.loginname, params: {} }">
+                <img :src="item.author.avatar_url" :title="item.author.loginname">
+              </router-link>
+            </div>
+            <div class="num">
+              <span title="回复数">{{item.reply_count}}</span>/
+              <span title="点击数">{{item.visit_count}}</span>
+            </div>
+            <div class="type">
+              {{item.tab}}
+            </div>
+            <div class="title" :title="item.title">
+              <router-link :to="{ path: '/topic/'+item.id, params: {} }">
+                {{item.title}}
+              </router-link>
+            </div>
+            <div class="answer">
+              <router-link :to="{ name: '', params: {} }">
+                <img src="" alt=""><span></span>
+              </router-link>
+            </div>
           </div>
-          <div class="more"><router-link :to="{ name: '', params: {} }">查看更多»</router-link></div>
+          <div class="more">
+            <router-link :to="{ name: '', params: {} }">查看更多»</router-link>
+          </div>
         </div>
       </div>
     </div>

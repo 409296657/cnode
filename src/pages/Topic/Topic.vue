@@ -26,12 +26,17 @@
       <div class="bar">回复</div>
       <div class="replyList" v-for="(reply,index) in replyList">
         <div class="img">
-          <img :src="reply.author.avatar_url">
+          <router-link :to="{ path: '/user/'+reply.author.loginname, params: {} }">
+            <img :src="reply.author.avatar_url">
+          </router-link>
         </div>
         <div class="content">
           <div class="userBar">
             <div class="user">
-              <router-link :to="{ name: '', params: {} }">{{reply.author.loginname}}</router-link> {{index+1}}楼
+              <router-link :to="{ path: '/user/'+reply.author.loginname, params: {} }">
+                {{reply.author.loginname}}
+              </router-link>
+              {{index+1}}楼
               <span>{{replyTime[index]}}</span>
             </div>
             <div class="icon"><i class="el-icon-edit"></i></div>
