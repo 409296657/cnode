@@ -1,6 +1,6 @@
 <template>
   <div id="MainPage">
-    <div class="Nav">
+    <div class="body">
       <div class="navbar">
         <div v-for='(icon,index) in iconList' class="icon" :class='{active:isActive==icon.name}' @click="choseTopics(icon)">{{icon.text}}</div>
       </div>
@@ -42,33 +42,38 @@
     </div>
 
     <div class="banner">
-      <div class="userInfo">
-        <div class="bar"><span>个人信息</span></div>
-        <div class="content">
-          <p><img :src="user.avatar_url"><router-link :to="{ path: '/user/'+user.loginname, params: {} }">{{user.loginname}}</router-link></p>
-          <p>积分:{{score}}</p>
-          <p>111</p>
-        </div>
-      </div>
+      <UserInfo :user="user" title="个人信息"></UserInfo>
+      <CreateTopic></CreateTopic>
     </div>
   </div>
 </template>
 
 <script>
+import UserInfo from '@/components/common/UserInfo'
+import CreateTopic from '@/components/common/CreateTopic'
 export default {
   name:'MainPage',
   components:{
-
+    UserInfo,
+    CreateTopic,
   },
   data () {
     return {
-      iconList:[{text:"全部",name:"all",index:0},{text:"精华",name:"good",index:1},{text:"分享",name:"share",index:2},{text:"问答",name:"ask",index:3},{text:"招聘",name:"job",index:4},{text:"客户端测试",name:"dev",index:5}],
+      iconList:[
+        {text:"全部",name:"all",index:0},
+        {text:"精华",name:"good",index:1},
+        {text:"分享",name:"share",index:2},
+        {text:"问答",name:"ask",index:3},
+        {text:"招聘",name:"job",index:4},
+        {text:"客户端测试",name:"dev",index:5}
+      ],
       isActive:'',
       topic:'',
       itemList:'',
       tab:this.$route.query.tab?this.$route.query.tab:'',
       time:[],
       accesstoken:'',
+      me:'',
       user:'',
       score:'',
       loginname:'',
@@ -147,18 +152,19 @@ export default {
       }
     })
     .then((res)=>{
-      console.log(res)
       let data = res.data;
-      this.user = data;
+      this.me = data;
       this.axios({
         method:"GET",
-        url:"https://cnodejs.org/api/v1/user/"+this.user.loginname,
+        url:"https://cnodejs.org/api/v1/user/"+this.me.loginname,
         params:{
 
         }
       })
       .then((res)=>{
-        this.score = res.data.data.score;
+        console.log(res)
+        let data = res.data.data;
+        this.user = data;
       })
       .catch((err)=>{
 
@@ -178,7 +184,7 @@ export default {
   padding: 20px 0;
   width: 1200px;
   display: flex;
-  .Nav{
+  .body{
     width: 900px;
     .navbar{
       height: 40px;
@@ -248,6 +254,9 @@ export default {
           font-size: 16px;
           flex:1;
           padding: 0 10px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
           a{
             color: #333;
             text-decoration: none;
@@ -286,38 +295,7 @@ export default {
   .banner{
     flex: 1;
     margin-left: 20px;
-    .userInfo{
-      background-color: #fff;
-      border-radius: 5px;
-      .bar{
-        height: 40px;
-        background-color: #f6f6f6;
-        display: flex;
-        align-items: center;
-        border-radius: 5px 5px 0 0;
-        font-size: 14px;
-        box-sizing: border-box;
-        text-indent: 8px;
-      }
-      .content{
-        padding: 8px;
-        p{
-          display: flex;
-          align-items: center;
-          img{
-            display: inline-block;
-            width: 48px;
-            height: 48px;
-            border-radius: 3px;
-            margin-right: 10px;
-          }
-          a{
-            color: #778087;
-            text-decoration: none;
-          }
-        }
-      }
-    }
+
   }
 }
 </style>

@@ -37,26 +37,20 @@
     </div>
 
     <div class="banner">
-      <div class="userInfo">
-        <div class="bar"><span>个人信息</span></div>
-        <div class="content">
-          <p>
-            <img :src="user.avatar_url">
-            <router-link :to="{ path: '/user/'+user.loginname, params: {} }">{{user.loginname}}</router-link>
-          </p>
-          <p>积分:{{score}}</p>
-          <p>111</p>
-        </div>
-      </div>
+      <UserInfo :user="user" title="个人信息"></UserInfo>
+      <CreateTopic></CreateTopic>
     </div>
   </div>
 </template>
 
 <script>
+import UserInfo from '@/components/common/UserInfo'
+import CreateTopic from '@/components/common/CreateTopic'
 export default {
   name:'Collection',
   components:{
-
+    UserInfo,
+    CreateTopic,
   },
   data () {
     return {
@@ -263,38 +257,7 @@ export default {
   .banner{
     flex: 1;
     margin-left: 20px;
-    .userInfo{
-      background-color: #fff;
-      border-radius: 5px;
-      .bar{
-        height: 40px;
-        background-color: #f6f6f6;
-        display: flex;
-        align-items: center;
-        border-radius: 5px 5px 0 0;
-        font-size: 14px;
-        box-sizing: border-box;
-        text-indent: 8px;
-      }
-      .content{
-        padding: 8px;
-        p{
-          display: flex;
-          align-items: center;
-          img{
-            display: inline-block;
-            width: 48px;
-            height: 48px;
-            border-radius: 3px;
-            margin-right: 10px;
-          }
-          a{
-            color: #778087;
-            text-decoration: none;
-          }
-        }
-      }
-    }
+
   }
 }
 </style>

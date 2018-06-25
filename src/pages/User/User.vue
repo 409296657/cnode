@@ -13,12 +13,13 @@
             <router-link :to="{ name: '', params: {} }">{{user.loginname}}</router-link>
           </p>
           <p>积分 : {{user.score}}</p>
-          <p>
+          <p v-if="collection!==0">
             <router-link :to="{ path: user.loginname+'/collections', params: {} }">
               {{collection}}个收藏话题
             </router-link>
           </p>
-          <p>github地址：<a :href="github" target="_blank">@{{user.githubUsername}}</a></p>
+          <p v-else>该用户没有收藏的话题</p>
+          <p v-if="user.githubUsername">github地址：<a :href="github" target="_blank">@{{user.githubUsername}}</a></p>
           <p>注册时间: {{registrationTime}}</p>
         </div>
       </div>
@@ -34,21 +35,12 @@
                 <img :src="item.author.avatar_url" :title="item.author.loginname">
               </router-link>
             </div>
-            <div class="num">
-              <span title="回复数">{{item.reply_count}}</span>/
-              <span title="点击数">{{item.visit_count}}</span>
-            </div>
             <div class="type">
               {{item.tab}}
             </div>
             <div class="title" :title="item.title">
               <router-link :to="{ path: '/topic/'+item.id, params: {} }">
                 {{item.title}}
-              </router-link>
-            </div>
-            <div class="answer">
-              <router-link :to="{ name: '', params: {} }">
-                <img src="" alt=""><span></span>
               </router-link>
             </div>
           </div>
@@ -69,21 +61,12 @@
                 <img :src="item.author.avatar_url" :title="item.author.loginname">
               </router-link>
             </div>
-            <div class="num">
-              <span title="回复数">{{item.reply_count}}</span>/
-              <span title="点击数">{{item.visit_count}}</span>
-            </div>
             <div class="type">
               {{item.tab}}
             </div>
             <div class="title" :title="item.title">
               <router-link :to="{ path: '/topic/'+item.id, params: {} }">
                 {{item.title}}
-              </router-link>
-            </div>
-            <div class="answer">
-              <router-link :to="{ name: '', params: {} }">
-                <img src="" alt=""><span></span>
               </router-link>
             </div>
           </div>
@@ -95,23 +78,20 @@
     </div>
 
     <div class="banner">
-      <div class="userInfo">
-        <div class="bar"><span>个人信息</span></div>
-        <div class="content">
-          <p><img :src="user.avatar_url"><router-link :to="{ name: '', params: {} }">{{user.loginname}}</router-link></p>
-          <p>积分 : {{user.score}}</p>
-          <p>111</p>
-        </div>
-      </div>
+      <UserInfo :user="user" title="个人信息"></UserInfo>
+      <CreateTopic></CreateTopic>
     </div>
   </div>
 </template>
 
 <script>
+import UserInfo from '@/components/common/UserInfo'
+import CreateTopic from '@/components/common/CreateTopic'
 export default {
   name:'User',
   components:{
-
+    UserInfo,
+    CreateTopic,
   },
   data () {
     return {
@@ -177,9 +157,9 @@ export default {
   width: 1200px;
   display: flex;
   .container{
-
+    width: 900px;
     .Nav{
-      width: 900px;
+
       .navbar{
         height: 40px;
         background-color: #f6f6f6;
@@ -251,16 +231,6 @@ export default {
               height: 100%;
             }
           }
-          .num{
-            width: 100px;
-            text-align: center;
-            span:first-child{
-              color:#9e78c0;
-            }
-            span:last-child{
-              color: #b4b4b4;
-            }
-          }
           .type{
             padding: 2px 4px;
             background-color: #e5e5e5;
@@ -280,6 +250,9 @@ export default {
             font-size: 16px;
             flex:1;
             padding: 0 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             a{
               color: #333;
               text-decoration: none;
@@ -287,26 +260,6 @@ export default {
             }
             a:hover{
               text-decoration: underline;
-            }
-          }
-          .answer{
-
-            a{
-              text-decoration: none;
-              text-align: right;
-              display: flex;
-              align-items: center;
-              color: #333;
-              img{
-                display: inline-block;
-                width: 18px;
-                height: 18px;
-                background-color: #eee;
-                margin-right: 6px;
-              }
-              span{
-                text-align: right;
-              }
             }
           }
         }
@@ -330,38 +283,7 @@ export default {
   .banner{
     flex: 1;
     margin-left: 20px;
-    .userInfo{
-      background-color: #fff;
-      border-radius: 5px;
-      .bar{
-        height: 40px;
-        background-color: #f6f6f6;
-        display: flex;
-        align-items: center;
-        border-radius: 5px 5px 0 0;
-        font-size: 14px;
-        box-sizing: border-box;
-        text-indent: 8px;
-      }
-      .content{
-        padding: 8px;
-        p{
-          display: flex;
-          align-items: center;
-          img{
-            display: inline-block;
-            width: 48px;
-            height: 48px;
-            border-radius: 3px;
-            margin-right: 10px;
-          }
-          a{
-            color: #778087;
-            text-decoration: none;
-          }
-        }
-      }
-    }
+
   }
 }
 </style>
