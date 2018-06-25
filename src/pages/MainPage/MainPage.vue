@@ -26,7 +26,6 @@
           </div>
           <div class="answer">
             <router-link :to="{ name: '', params: {} }">
-              <img src="" alt="">
               <span>{{time[index]}}</span>
             </router-link>
           </div>
@@ -162,7 +161,6 @@ export default {
         }
       })
       .then((res)=>{
-        console.log(res)
         let data = res.data.data;
         this.user = data;
       })

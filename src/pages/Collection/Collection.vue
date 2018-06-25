@@ -28,7 +28,7 @@
             </router-link>
           </div>
           <div class="answer">
-            <router-link :to="{ name: '', params: {} }"><img src="" alt="">
+            <router-link :to="{ name: '', params: {} }">
               <span>{{time[index]}}</span>
             </router-link>
           </div>

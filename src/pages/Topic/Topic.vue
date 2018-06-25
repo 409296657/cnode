@@ -41,7 +41,15 @@
                 <span>{{replyTime[index]}}</span>
                 <span class="author" v-if="reply.author.loginname==authorName"> 作者</span>
               </div>
-              <div class="icon"><i class="el-icon-edit"></i></div>
+              <div class="icon">
+                <div class="fabulous" :class="{display:reply.ups.length==0}">
+                  <span class="iconfont icon-dianzan1" @click="fabulous(reply)" :class="{red:reply.is_uped}"></span>
+                  <span v-if="reply.ups.length!=0">{{reply.ups.length}}</span>
+                </div>
+                <router-link :to="{ name: '', params: {} }">
+                  <i class="el-icon-edit"></i>
+                </router-link>
+              </div>
             </div>
             <div class="text" v-html="reply.content"></div>
           </div>
@@ -78,6 +86,28 @@ export default {
     }
   },
   methods:{
+    fabulous:function(data){
+      console.log(data)
+      data.is_uped = !data.is_uped;
+      this.axios({
+        method:"POST",
+        url:"https://cnodejs.org/api/v1/reply/"+data.id+"/ups",
+        data:{
+          accesstoken:this.accesstoken,
+        }
+      })
+      .then((res)=>{
+        console.log(res)
+        if (res.data.action=='up') {
+          data.ups.push(1);
+        }else {
+          data.ups.pop();
+        }
+      })
+      .catch((err)=>{
+        console.log(err)
+      })
+    },
     cancel:function(){
       this.axios({
         method:"POST",
@@ -176,6 +206,9 @@ export default {
   padding: 20px 0;
   width: 1200px;
   display: flex;
+  .red{
+    color: red;
+  }
   .body{
     width: 900px;
     .topic{
@@ -282,6 +315,15 @@ export default {
             }
             .icon{
               font-size: 16px;
+              .fabulous{
+                display: inline-block;
+                span:first-child{
+                  cursor: pointer;
+                }
+              }
+              .display{
+                display: none;
+              }
             }
           }
           .text{
@@ -293,6 +335,9 @@ export default {
             }
           }
         }
+      }
+      .replyList:hover .content .userBar .icon .fabulous{
+        display: inline-block;
       }
     }
   }

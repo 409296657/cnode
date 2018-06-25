@@ -4,9 +4,10 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import axios from 'axios'
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 import util from '@/utils/common'
+import './assets/icon/iconfont.css'
 
 Vue.config.productionTip = false
 Vue.prototype.axios = axios
