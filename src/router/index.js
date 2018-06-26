@@ -4,6 +4,8 @@ import MainPage from '@/pages/MainPage/MainPage'
 import Topic from '@/pages/Topic/Topic'
 import User from '@/pages/User/User'
 import Collection from '@/pages/Collection/Collection'
+import UserReplies from '@/pages/UserReplies/UserReplies'
+import UserTopic from '@/pages/UserTopic/UserTopic'
 
 Vue.use(Router)
 
@@ -25,6 +27,14 @@ export default new Router({
       path: '/user/:id/collections',
       name: 'Collection',
       component: Collection
+    },{
+      path: '/user/:id/topic',
+      name: 'UserTopic',
+      component: UserTopic
+    },{
+      path: '/user/:id/replies',
+      name: 'UserReplies',
+      component: UserReplies
     }
   ]
 })

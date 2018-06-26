@@ -59,6 +59,20 @@
 
     <div class="banner">
       <UserInfo :user="user" title="作者"></UserInfo>
+      <div class="found" v-if="otherTopic.length!=0">
+        <div class="navbar">
+          <span>作者其他话题</span>
+        </div>
+        <div class="content">
+          <div class="topic" v-for='(item,index) in otherTopic'>
+            <div class="title" :title="item.title">
+              <router-link :to="{ path: '/topic/'+item.id, params: {} }">
+                {{item.title}}
+              </router-link>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -83,12 +97,12 @@ export default {
       accesstoken:'',
       is_collect:'',
       user:'',
+      otherTopic:[],
     }
   },
   methods:{
     fabulous:function(data){
       console.log(data)
-      data.is_uped = !data.is_uped;
       this.axios({
         method:"POST",
         url:"https://cnodejs.org/api/v1/reply/"+data.id+"/ups",
@@ -97,12 +111,22 @@ export default {
         }
       })
       .then((res)=>{
-        console.log(res)
-        if (res.data.action=='up') {
-          data.ups.push(1);
-        }else {
-          data.ups.pop();
-        }
+        this.axios({
+          method:"GET",
+          url:"https://cnodejs.org/api/v1/topic/"+this.$route.params.id,
+          params:{
+            accesstoken:this.accesstoken,
+          }
+        })
+        .then((res)=>{
+          console.log(res)
+          let data = res.data.data;
+          this.replyList = data.replies;
+          data.is_uped = !data.is_uped;
+        })
+        .catch((err)=>{
+
+        })
       })
       .catch((err)=>{
         console.log(err)
@@ -149,7 +173,6 @@ export default {
         }
       })
       .then((res)=>{
-        console.log(res)
         let data = res.data.data;
         this.dataList = data;
         this.releaseTime = this.util.formTimeToData(data.create_at);
@@ -180,8 +203,15 @@ export default {
           }
         })
         .then((res)=>{
+          console.log(res)
           let data = res.data.data;
           this.user = data;
+          for (var i = 0; this.otherTopic.length<5&&i<data.recent_topics.length; i++) {
+            if (data.recent_topics[i].id != this.$route.params.id) {
+              this.otherTopic.push(data.recent_topics[i]);
+            }
+          }
+          console.log(this.otherTopic)
         })
         .catch((err)=>{
 
@@ -344,7 +374,49 @@ export default {
   .banner{
     flex: 1;
     margin-left: 20px;
-
+    .found{
+      margin: 20px 0;
+      .navbar{
+        height: 30px;
+        background-color: #f6f6f6;
+        display: flex;
+        align-items: center;
+        border-radius: 5px 5px 0 0;
+        border-bottom: 1px solid #e5e5e5;
+        padding: 0 10px;
+        font-size: 14px;
+      }
+      .content{
+        border-radius:0 0 5px 5px;
+        background-color: #fff;
+        .topic{
+          height: 30px;
+          border-bottom: 1px solid #f0f0f0;
+          display: flex;
+          align-items: center;
+          font-size: 14px;
+          width: 260px;
+          .title{
+            font-size: 16px;
+            padding: 0 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            a{
+              color: #778087;
+              text-decoration: none;
+              font-size: 14px;
+            }
+            a:hover{
+              text-decoration: underline;
+            }
+          }
+        }
+        .topic:hover{
+          background-color: #f5f5f5;
+        }
+      }
+    }
   }
 }
 </style>

@@ -1,26 +1,12 @@
 <template>
-  <div id="User">
+  <div id="UserTopic">
     <div class="container">
       <div class="Nav">
         <div class="navbar">
           <div class="icon">
-            <router-link :to="{ path: '/', params: {} }">主页</router-link>/
+            <router-link :to="{ path: '/', params: {} }">主页</router-link> /
+            <router-link :to="{ path: '/user/'+user.loginname, params: {} }">{{user.loginname}}的主页</router-link>
           </div>
-        </div>
-        <div class="content">
-          <p>
-            <img :src="user.avatar_url">
-            <router-link :to="{ name: '', params: {} }">{{user.loginname}}</router-link>
-          </p>
-          <p>积分 : {{user.score}}</p>
-          <p v-if="collection!==0">
-            <router-link :to="{ path: user.loginname+'/collections', params: {} }">
-              {{collection}}个收藏话题
-            </router-link>
-          </p>
-          <p v-else>该用户没有收藏的话题</p>
-          <p v-if="user.githubUsername">github地址：<a :href="github" target="_blank">@{{user.githubUsername}}</a></p>
-          <p>注册时间: {{registrationTime}}</p>
         </div>
       </div>
 
@@ -44,37 +30,9 @@
               </router-link>
             </div>
           </div>
-          <div class="more">
-            <router-link :to="{ path: user.loginname+'/topic', params: {} }">查看更多»</router-link>
-          </div>
         </div>
       </div>
 
-      <div class="found">
-        <div class="navbar">
-          <span>最近参与的话题</span>
-        </div>
-        <div class="content">
-          <div class="topic" v-for='(item,index) in join'>
-            <div class="img">
-              <router-link :to="{ path: '/user/'+item.author.loginname, params: {} }">
-                <img :src="item.author.avatar_url" :title="item.author.loginname">
-              </router-link>
-            </div>
-            <div class="type">
-              {{item.tab}}
-            </div>
-            <div class="title" :title="item.title">
-              <router-link :to="{ path: '/topic/'+item.id, params: {} }">
-                {{item.title}}
-              </router-link>
-            </div>
-          </div>
-          <div class="more">
-            <router-link :to="{ path: user.loginname+'/replies', params: {} }">查看更多»</router-link>
-          </div>
-        </div>
-      </div>
     </div>
 
     <div class="banner">
@@ -88,7 +46,7 @@
 import UserInfo from '@/components/common/UserInfo'
 import CreateTopic from '@/components/common/CreateTopic'
 export default {
-  name:'User',
+  name:'UserTopic',
   components:{
     UserInfo,
     CreateTopic,
@@ -99,8 +57,6 @@ export default {
       github:'',
       registrationTime:'',
       found:[],
-      join:[],
-      collection:'',
     }
   },
   methods:{
@@ -113,16 +69,12 @@ export default {
         }
       })
       .then((res)=>{
+        console.log(res)
         let data = res.data.data;
         this.user = data;
         this.github = "https://github.com/"+data.githubUsername;
         this.registrationTime = this.util.formTimeToData(data.create_at);
-        for (var i = 0; i < 5&&i<data.recent_topics.length; i++) {
-          this.found[i] = data.recent_topics[i];
-        };
-        for (var i = 0; i < 5&&i<data.recent_replies.length; i++) {
-          this.join[i] = data.recent_replies[i];
-        };
+        this.found = data.recent_topics;
       })
       .catch((err)=>{
         console.log(err)
@@ -131,27 +83,13 @@ export default {
   },
   mounted(){
     this.init();
-    this.axios({
-      method:"GET",
-      url:"https://cnodejs.org/api/v1/topic_collect/"+this.$route.params.id,
-      params:{
-
-      }
-    })
-    .then((res)=>{
-      console.log(res)
-      this.collection = res.data.data.length;
-    })
-    .catch((err)=>{
-      console.log(err)
-    })
   },
 }
 </script>
 
 
 <style lang="less">
-#User{
+#UserTopic{
   margin: 0 auto;
   padding: 20px 0;
   width: 1200px;
@@ -176,26 +114,6 @@ export default {
           a{
             text-decoration: none;
             color: #80bd01;
-          }
-        }
-      }
-      .content{
-        padding: 8px;
-        border-radius:0 0 5px 5px;
-        background-color: #fff;
-        p{
-          display: flex;
-          align-items: center;
-          img{
-            display: inline-block;
-            width: 48px;
-            height: 48px;
-            border-radius: 3px;
-            margin-right: 10px;
-          }
-          a{
-            color: #778087;
-            text-decoration: none;
           }
         }
       }
@@ -265,17 +183,6 @@ export default {
         }
         .topic:hover{
           background-color: #f5f5f5;
-        }
-        .more{
-          padding: 0 10px;
-          height: 40px;
-          display: flex;
-          align-items: center;
-          border-radius:0 0 5px 5px;
-          a{
-            text-decoration: none;
-            color: #666;
-          }
         }
       }
     }
