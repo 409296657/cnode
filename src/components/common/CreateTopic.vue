@@ -11,7 +11,6 @@
 <script>
 export default {
   name:'UserInfo',
-  props:['user','title'],
   components:{
 
   },
@@ -39,14 +38,19 @@ export default {
     background-color: #fff;
     border-radius: 5px;
     .btn{
-      padding: 5px;
+      padding: 8px;
       background-color: #80bd01;
       display: inline-block;
       border-radius: 3px;
+      transition: background-color 0.4s;
       a{
         color: #fff;
         text-decoration: none;
+        font-size: 14px;
       }
+    }
+    .btn:hover{
+      background-color: #6ba44e;
     }
   }
 }

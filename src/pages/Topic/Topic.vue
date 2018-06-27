@@ -73,6 +73,7 @@
           </div>
         </div>
       </div>
+      <NoReply></NoReply>
     </div>
 
   </div>
@@ -80,10 +81,12 @@
 
 <script>
 import UserInfo from '@/components/common/UserInfo'
+import NoReply from '@/components/common/NoReply'
 export default {
   name:'Topic',
   components:{
     UserInfo,
+    NoReply,
   },
   data () {
     return {
@@ -251,7 +254,7 @@ export default {
         padding: 20px 10px;
         border-bottom: 1px solid #e5e5e5;
         .text{
-
+          width: 750px;
           .title{
             font-size: 22px;
             span{

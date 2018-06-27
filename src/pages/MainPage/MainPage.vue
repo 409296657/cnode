@@ -43,6 +43,7 @@
     <div class="banner">
       <UserInfo :user="user" title="个人信息"></UserInfo>
       <CreateTopic></CreateTopic>
+      <NoReply></NoReply>
     </div>
   </div>
 </template>
@@ -50,11 +51,13 @@
 <script>
 import UserInfo from '@/components/common/UserInfo'
 import CreateTopic from '@/components/common/CreateTopic'
+import NoReply from '@/components/common/NoReply'
 export default {
   name:'MainPage',
   components:{
     UserInfo,
     CreateTopic,
+    NoReply,
   },
   data () {
     return {
@@ -104,7 +107,7 @@ export default {
         params:{
           page:this.$route.query.page?this.$route.query.page:'',
           tab:this.$route.query.tab?this.$route.query.tab:'',
-          limit:"0",
+          limit:"40",
           mdrender:"",
         }
       })
@@ -199,8 +202,11 @@ export default {
         cursor: pointer;
         &.active{
           background-color: #80bd01;
-          color: #fff;
+          color: #fff !important;
         }
+      }
+      .icon:hover{
+        color: #005580;
       }
     }
     .content{
