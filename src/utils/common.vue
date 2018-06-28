@@ -39,7 +39,7 @@ const util = {
 		let t = nt - ot;
 		if (t<60) {
 			let s = t;
-			return s+"秒前";
+			return parseInt(s)+"秒前";
 		}else if (t>=60&&t<3600) {
 			let m = parseInt(t/60);
 			return m+" 分钟前";

@@ -55,6 +55,16 @@
           </div>
         </div>
       </div>
+
+      <div class="write">
+        <div class="topbar">
+          添加回复
+        </div>
+        <div id="editorElem" style="text-align:left"></div>
+        <div class="footbar">
+          <div class="btn" @click="getContent">回&nbsp;&nbsp;复</div>
+        </div>
+      </div>
     </div>
 
     <div class="banner">
@@ -85,6 +95,7 @@
 import UserInfo from '@/components/common/UserInfo'
 import NoReply from '@/components/common/NoReply'
 import GoTop from '@/components/common/GoTop'
+import E from 'wangeditor'
 export default {
   name:'Topic',
   components:{
@@ -105,11 +116,32 @@ export default {
       is_collect:'',
       user:'',
       otherTopic:[],
+      editorContent: '',
     }
   },
   methods:{
+    getContent: function () {
+      this.axios({
+        method:"POST",
+        url:"https://cnodejs.org/api/v1/topic/"+this.$route.params.id+"/replies",
+        data:{
+          accesstoken:this.accesstoken,
+          content :this.editorContent,
+          reply_id :'',
+        }
+      })
+      .then((res)=>{
+        // var editor = new E('#editorElem');
+        // var E = window.wangEditor
+        var editor = new E('#editorElem')
+        editor.create();
+        this.init();
+      })
+      .catch((err)=>{
+        console.log(err)
+      })
+    },
     fabulous:function(data){
-      console.log(data)
       this.axios({
         method:"POST",
         url:"https://cnodejs.org/api/v1/reply/"+data.id+"/ups",
@@ -126,7 +158,6 @@ export default {
           }
         })
         .then((res)=>{
-          console.log(res)
           let data = res.data.data;
           this.replyList = data.replies;
           data.is_uped = !data.is_uped;
@@ -210,7 +241,6 @@ export default {
           }
         })
         .then((res)=>{
-          console.log(res)
           let data = res.data.data;
           this.user = data;
           for (var i = 0; this.otherTopic.length<5&&i<data.recent_topics.length; i++) {
@@ -218,7 +248,6 @@ export default {
               this.otherTopic.push(data.recent_topics[i]);
             }
           }
-          console.log(this.otherTopic)
         })
         .catch((err)=>{
 
@@ -232,6 +261,11 @@ export default {
   mounted(){
     this.accesstoken = this.util.getCookie('accesstoken');
     this.init();
+    var editor = new E('#editorElem')
+    editor.customConfig.onchange = (html) => {
+      this.editorContent = html
+    }
+    editor.create()
   },
 }
 </script>
@@ -375,6 +409,36 @@ export default {
       }
       .replyList:hover .content .userBar .icon .fabulous{
         display: inline-block;
+      }
+    }
+    .write{
+
+      .topbar{
+        color: #333;
+        padding: 10px;
+        background-color: #f6f6f6;
+        font-size: 16 px;
+        line-height: 20px;
+      }
+      #editorElem{
+        .w-e-toolbar{
+          background-color: #fff !important;
+        }
+        .w-e-text-container{
+          background-color: #fff !important;
+          height: 200px !important;
+        }
+      }
+      .footbar{
+        padding: 10px;
+        background-color: #fff;
+        .btn{
+          padding: 5px 10px;
+          border-radius: 5px;
+          background-color: #0088cc;
+          color: #fff;
+          display: inline-block;
+        }
       }
     }
   }

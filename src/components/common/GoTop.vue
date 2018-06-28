@@ -20,7 +20,6 @@ export default {
   methods:{
     scrollTop:function(){
       this.Top = document.documentElement.scrollTop;
-      console.log(this.Top)
     },
     goTop:function(){
       var timer = null;
