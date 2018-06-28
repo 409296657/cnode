@@ -45,19 +45,25 @@
       <CreateTopic></CreateTopic>
       <NoReply></NoReply>
     </div>
+    
+    <GoTop></GoTop>
   </div>
+
+
 </template>
 
 <script>
 import UserInfo from '@/components/common/UserInfo'
 import CreateTopic from '@/components/common/CreateTopic'
 import NoReply from '@/components/common/NoReply'
+import GoTop from '@/components/common/GoTop'
 export default {
   name:'MainPage',
   components:{
     UserInfo,
     CreateTopic,
     NoReply,
+    GoTop,
   },
   data () {
     return {

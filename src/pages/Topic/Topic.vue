@@ -76,17 +76,21 @@
       <NoReply></NoReply>
     </div>
 
+    <GoTop></GoTop>
+
   </div>
 </template>
 
 <script>
 import UserInfo from '@/components/common/UserInfo'
 import NoReply from '@/components/common/NoReply'
+import GoTop from '@/components/common/GoTop'
 export default {
   name:'Topic',
   components:{
     UserInfo,
     NoReply,
+    GoTop,
   },
   data () {
     return {
