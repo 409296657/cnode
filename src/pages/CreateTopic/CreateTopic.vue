@@ -22,7 +22,9 @@
             <span v-if="value != ''&&value != 'dev'">*个人练习做的小项目，为了避免污染社区，请选择发布在客户端测试区</span>
           </div>
           <div class="title">
-            <input type="text" name="" placeholder="标题字数 10 字以上">
+            <input type="text" name="" placeholder="标题字数 10 字以上" v-model="title" @blur="titleBlur">
+            <span v-show="title1">*请输入标题</span>
+            <span v-show="title2">*标题字数必须10字以上</span>
           </div>
           <div class="text">
             <div id="editor" style="text-align:left"></div>
@@ -63,11 +65,27 @@ export default {
           label: '客户端测试'
         }],
         value: '',
+        title:'',
+        title1:'',
+        title2:'',
+        editorContent:'',
     }
   },
   methods:{
+    titleBlur:function(){
+      if(this.title == ''){
+        this.title1 = true;
+        this.title2 = '';
+      }else if(this.title.length <10&&this.title){
+        this.title1 = '';
+        this.title2 = true;
+      }else {
+        this.title1 = '';
+        this.title2 = '';
+      }
+    },
     submit:function(){
-
+      console.log(this.title.length)
     }
   },
   mounted(){
@@ -126,7 +144,7 @@ export default {
           }
         }
         .title{
-
+          height: 53px;
           input{
             width: 100%;
             padding: 6px 10px;
@@ -135,6 +153,10 @@ export default {
             border-radius: 5px;
             border: 1px solid #dedede;
             color: #999;
+          }
+          span{
+            color: red;
+            font-size: 14px;
           }
         }
         .footbar{
