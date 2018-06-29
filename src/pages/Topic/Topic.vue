@@ -117,29 +117,31 @@ export default {
       user:'',
       otherTopic:[],
       editorContent: '',
+      editor:'',
     }
   },
   methods:{
     getContent: function () {
-      this.axios({
-        method:"POST",
-        url:"https://cnodejs.org/api/v1/topic/"+this.$route.params.id+"/replies",
-        data:{
-          accesstoken:this.accesstoken,
-          content :this.editorContent,
-          reply_id :'',
-        }
-      })
-      .then((res)=>{
-        // var editor = new E('#editorElem');
-        // var E = window.wangEditor
-        var editor = new E('#editorElem')
-        editor.create();
-        this.init();
-      })
-      .catch((err)=>{
-        console.log(err)
-      })
+      this.editor.txt.clear()
+      // this.axios({
+      //   method:"POST",
+      //   url:"https://cnodejs.org/api/v1/topic/"+this.$route.params.id+"/replies",
+      //   data:{
+      //     accesstoken:this.accesstoken,
+      //     content :this.editorContent,
+      //     reply_id :'',
+      //   }
+      // })
+      // .then((res)=>{
+      //   // var editor = new E('#editorElem');
+      //   var E = window.wangEditor
+      //   var editor = new E('#editorElem')
+      //   editor.create()
+      //   this.init();
+      // })
+      // .catch((err)=>{
+      //   console.log(err)
+      // })
     },
     fabulous:function(data){
       this.axios({
@@ -261,7 +263,8 @@ export default {
   mounted(){
     this.accesstoken = this.util.getCookie('accesstoken');
     this.init();
-    var editor = new E('#editorElem')
+    let editor = new E('#editorElem')
+    this.editor = editor
     editor.customConfig.onchange = (html) => {
       this.editorContent = html
     }
@@ -412,7 +415,7 @@ export default {
       }
     }
     .write{
-
+      margin: 10px 0;
       .topbar{
         color: #333;
         padding: 10px;

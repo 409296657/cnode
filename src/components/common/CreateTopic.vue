@@ -2,7 +2,7 @@
   <div id="CreateTopic">
     <div class="CreateTopic">
       <div class="btn">
-        <router-link :to="{ name: '', params: {} }">发布话题</router-link>
+        <router-link :to="{ path: '/createtopic', params: {} }">发布话题</router-link>
       </div>
     </div>
   </div>
@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  name:'UserInfo',
+  name:'CreateTopic',
   components:{
 
   },
@@ -42,6 +42,7 @@ export default {
       background-color: #80bd01;
       display: inline-block;
       border-radius: 3px;
+      cursor: pointer;
       transition: background-color 0.4s;
       a{
         color: #fff;
