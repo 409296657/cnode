@@ -11,7 +11,7 @@
         <div class="content">
           <div class="template">
             选择版块：
-            <el-select v-model="value" placeholder="请选择" size=small>
+            <el-select v-model="value" placeholder="请选择" size=small @blur="select = ''">
               <el-option
                 v-for="item in options"
                 :key="item.value"
@@ -20,6 +20,7 @@
               </el-option>
             </el-select>
             <span v-if="value != ''&&value != 'dev'">*个人练习做的小项目，为了避免污染社区，请选择发布在客户端测试区</span>
+            <span v-if="select">*请选择模板</span>
           </div>
           <div class="title">
             <input type="text" name="" placeholder="标题字数 10 字以上" v-model="title" @blur="titleBlur">
@@ -30,6 +31,7 @@
             <div id="editor" style="text-align:left"></div>
           </div>
           <div class="footbar">
+            <div class="tips"><span v-show="tips">*请输入内容</span></div>
             <div class="btn" @click="submit">提&nbsp;&nbsp;交</div>
           </div>
         </div>
@@ -64,11 +66,14 @@ export default {
           value: 'dev',
           label: '客户端测试'
         }],
+        accesstoken:'',
         value: '',
         title:'',
         title1:'',
         title2:'',
         editorContent:'',
+        select:'',
+        tips:'',
     }
   },
   methods:{
@@ -85,14 +90,46 @@ export default {
       }
     },
     submit:function(){
-      console.log(this.title.length)
+      if (this.value =='') {
+        console.log(this.value)
+        this.select = true;
+      };
+      if (this.title == '') {
+        this.title1 = true;
+        this.title2 = '';
+      };
+      if (this.editorContent == '') {
+        this.tips = true;
+      };
+      if (this.value=='dev'&&this.title.length>9&&this.editorContent != '') {
+        this.axios({
+          method:"POST",
+          url:"https://cnodejs.org/api/v1/topics",
+          data:{
+            accesstoken:this.accesstoken,
+            title:this.title,
+            tab:'dev',
+            content:this.editorContent
+          }
+        })
+        .then((res)=>{
+          console.log(res)
+          let id = res.data.topic_id;
+          this.$router.push({path:'/topic/'+id})
+        })
+        .catch((err)=>{
+          console.log(err)
+        })
+      }
     }
   },
   mounted(){
+    this.accesstoken = this.util.getCookie('accesstoken');
     let editor = new E('#editor')
     this.editor = editor
     editor.customConfig.onchange = (html) => {
-      this.editorContent = html
+      this.editorContent = html;
+      this.tips = '';
     }
     editor.create()
   },
@@ -159,15 +196,25 @@ export default {
             font-size: 14px;
           }
         }
+        .text{
+
+        }
         .footbar{
           padding: 10px;
           background-color: #fff;
+          .tips{
+            color: red;
+            font-size: 14px;
+            height: 20px;
+            margin-bottom: 10px;
+          }
           .btn{
             padding: 5px 10px;
             border-radius: 5px;
             background-color: #0088cc;
             color: #fff;
             display: inline-block;
+            cursor: pointer;
           }
         }
       }

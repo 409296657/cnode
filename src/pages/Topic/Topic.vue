@@ -122,26 +122,39 @@ export default {
   },
   methods:{
     getContent: function () {
-      this.editor.txt.clear()
-      // this.axios({
-      //   method:"POST",
-      //   url:"https://cnodejs.org/api/v1/topic/"+this.$route.params.id+"/replies",
-      //   data:{
-      //     accesstoken:this.accesstoken,
-      //     content :this.editorContent,
-      //     reply_id :'',
-      //   }
-      // })
-      // .then((res)=>{
-      //   // var editor = new E('#editorElem');
-      //   var E = window.wangEditor
-      //   var editor = new E('#editorElem')
-      //   editor.create()
-      //   this.init();
-      // })
-      // .catch((err)=>{
-      //   console.log(err)
-      // })
+      this.axios({
+        method:"POST",
+        url:"https://cnodejs.org/api/v1/topic/"+this.$route.params.id+"/replies",
+        data:{
+          accesstoken:this.accesstoken,
+          content :this.editorContent,
+          reply_id :'',
+        }
+      })
+      .then((res)=>{
+        this.editor.txt.clear()
+        this.axios({
+          method:"GET",
+          url:"https://cnodejs.org/api/v1/topic/"+this.$route.params.id,
+          params:{
+            accesstoken:this.accesstoken,
+          }
+        })
+        .then((res)=>{
+          let data = res.data.data;
+          this.dataList = data;
+          this.releaseTime = this.util.formTimeToData(data.create_at);
+          this.lastReplyTime = this.util.formTimeToData(data.last_reply_at);
+          let replyList = data.replies;
+          this.replyList = replyList;
+        })
+        .catch((err)=>{
+
+        })
+      })
+      .catch((err)=>{
+        console.log(err)
+      })
     },
     fabulous:function(data){
       this.axios({
