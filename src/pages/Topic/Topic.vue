@@ -120,6 +120,12 @@ export default {
       editor:'',
     }
   },
+  watch: {
+		'$route' (to, from) {
+			this.init();
+      this.editor.txt.clear()
+		},
+	},
   methods:{
     getContent: function () {
       this.axios({
